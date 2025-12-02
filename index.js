@@ -49,8 +49,8 @@ app.use("/user", UserRoute);
 app.use("/posts", PostRoute);
 app.use("/upload", UploadRoute);
 
-// serve files in server/public/images at /images
 app.use("/images", express.static(path.join(process.cwd(), "public", "images")));
-
-// mount upload route at /images/upload
 app.use("/images", uploadRoute);
+
+// --- ADD THIS ALIAS so old frontend POSTs to /upload still work ---
+app.use("/upload", uploadRoute);   // now POST /upload will behave like POST /images/upload
