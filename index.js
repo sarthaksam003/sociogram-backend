@@ -3,6 +3,8 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import path from "path";
+import uploadRoute from "./routes/UploadRoute.js"; // adjust path if needed
 
 // routes
 import AuthRoute from "./routes/AuthRoute.js";
@@ -46,3 +48,9 @@ app.use("/auth", AuthRoute);
 app.use("/user", UserRoute);
 app.use("/posts", PostRoute);
 app.use("/upload", UploadRoute);
+
+// serve files in server/public/images at /images
+app.use("/images", express.static(path.join(process.cwd(), "public", "images")));
+
+// mount upload route at /images/upload
+app.use("/images", uploadRoute);
