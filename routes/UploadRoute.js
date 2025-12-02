@@ -5,11 +5,9 @@ import path from "path";
 import fs from "fs";
 
 const router = express.Router();
-
 const uploadDir = path.join(process.cwd(), "public", "images");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-// disk storage with server-generated unique filename
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
@@ -21,15 +19,15 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// NOTE: router handles POST to "/" (not "/upload") so it can be mounted at multiple paths.
-router.post("/", upload.single("file"), (req, res) => {
+// mount at router.post("/", ...) so mounting at /images or /upload works
+router.post("/upload", upload.single("file"), (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
     const filename = req.file.filename;
     const url = `/images/${filename}`;
     return res.status(200).json({ filename, url });
-  } catch (error) {
-    console.error("Upload error:", error);
+  } catch (err) {
+    console.error(err);
     return res.status(500).json({ error: "Upload failed" });
   }
 });
