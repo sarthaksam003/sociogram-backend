@@ -1,3 +1,4 @@
+// server/routes/UploadRoute.js
 import express from "express";
 import multer from "multer";
 import path from "path";
@@ -8,6 +9,7 @@ const router = express.Router();
 const uploadDir = path.join(process.cwd(), "public", "images");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
+// disk storage with server-generated unique filename
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
@@ -19,8 +21,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// POST /images/upload
-router.post("/upload", upload.single("file"), (req, res) => {
+// NOTE: router handles POST to "/" (not "/upload") so it can be mounted at multiple paths.
+router.post("/", upload.single("file"), (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
     const filename = req.file.filename;
